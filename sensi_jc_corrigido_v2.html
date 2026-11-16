@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#b90016">
+<title>SENSI JC</title>
+<style>
+:root{--red:#f20d25;--dark:#090909;--panel:#171717;--muted:#aaa}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at top,#3a0008 0,#090909 42rem);color:#fff;font-family:Arial,sans-serif;padding:18px}
+main{max-width:720px;margin:auto}
+header{text-align:center;padding:22px 12px 18px}
+h1{font-size:clamp(2.8rem,12vw,5rem);line-height:.9;margin:0;color:#fff;font-weight:1000;font-style:italic;text-shadow:3px 3px 0 var(--red)}
+h1 span{color:var(--red)}
+header p{color:#ddd;font-weight:bold;letter-spacing:2px}
+.panel{background:linear-gradient(145deg,#1d1d1d,#080808);border:1px solid var(--red);border-radius:17px;padding:17px;margin:14px 0;box-shadow:0 0 15px #f20d2530}
+label{display:block;font-weight:bold;margin:10px 0 6px}
+select,button{width:100%;border-radius:11px;padding:14px;background:#242424;color:#fff;border:1px solid #777;font-size:1rem}
+select:focus{outline:2px solid var(--red)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.choices{display:flex;gap:8px}
+.choices button{padding:11px 5px}
+.choices button.active{background:var(--red);border-color:#ff6674}
+.primary{background:linear-gradient(120deg,#ff263b,#a90013);border:2px solid #ff6674;font-size:1.15rem;font-weight:900;letter-spacing:.5px;margin-top:15px}
+.secondary{background:#111;border-color:var(--red);font-weight:bold}
+.values{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.values span{padding:8px 0;border-bottom:1px solid #5a1820}
+.values strong{color:#ff3348;font-size:1.2rem;border:1px solid var(--red);border-radius:8px;padding:5px 15px;min-width:65px;text-align:center}
+.note{color:var(--muted);font-size:.85rem;line-height:1.4}
+footer{text-align:center;color:#aaa;font-weight:bold;padding:20px}
+@media(max-width:480px){.row{grid-template-columns:1fr}.choices{gap:5px}.choices button{font-size:.9rem}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>SENSI <span>JC</span></h1>
+<p>GERADOR DE SENSIBILIDADE • FREE FIRE</p>
+</header>
+<section class="panel">
+<div class="row">
+<div><label for="brand">Marca do celular</label><select id="brand"><option>Realme</option><option>Samsung</option><option>Motorola</option><option>Xiaomi</option><option>iPhone</option><option>Outra</option></select></div>
+<div><label for="model">Modelo</label><select id="model"><option>Realme Note 50</option><option>Outro modelo</option></select></div>
+</div>
+<label>DPI desejada</label>
+<div class="choices" id="dpiChoices">
+<button type="button" data-dpi="Baixa">Baixa</button><button type="button" data-dpi="Média" class="active">Média</button><button type="button" data-dpi="Alta">Alta</button>
+</div>
+<label for="style">Estilo de sensibilidade</label>
+<select id="style"><option>Capas e movimentação</option><option>Precisão</option><option>Geral / equilibrada</option></select>
+<button class="primary" id="generate">⚡ GERAR MINHA SENSI</button>
+</section>
+<section class="panel">
+<h2>🎯 SUA SENSIBILIDADE</h2>
+<div class="values" id="results">
+<span>Geral</span><strong>—</strong><span>Ponto vermelho</span><strong>—</strong><span>Mira 2x</span><strong>—</strong><span>Mira 4x</span><strong>—</strong><span>Mira AWM</span><strong>—</strong><span>Olhadinha</span><strong>—</strong><span>DPI sugerida</span><strong>—</strong><span>Botão de atirar</span><strong>—</strong>
+</div>
+<p class="note">As sensibilidades do Free Fire nesta versão usam escala de 0 a 200. As sugestões são pontos de partida; ajuste no treino conforme sua pegada, tela e desempenho. O gerador não altera as configurações do jogo automaticamente.</p>
+<div class="row"><button class="secondary" id="again">↻ GERAR OUTRA</button><button class="primary" id="copy">▣ COPIAR SENSI</button></div>
+</section>
+<footer>SENSI JC — SUA VITÓRIA COMEÇA AQUI!</footer>
+</main>
+<script>
+let dpi="Média", last=null;
+document.querySelectorAll("[data-dpi]").forEach(b=>b.addEventListener("click",()=>{dpi=b.dataset.dpi;document.querySelectorAll("[data-dpi]").forEach(x=>x.classList.toggle("active",x===b));}));
+const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+function generate(){
+ const ranges=dpi==="Baixa"?[[130,155],[125,150],[110,140],[95,125],[45,80],[120,145],[400,500],[35,48]]:dpi==="Alta"?[[180,200],[175,200],[155,190],[140,180],[70,110],[165,195],[900,1200],[45,60]]:[[155,180],[150,175],[130,160],[115,145],[55,95],[145,170],[600,800],[40,55]];
+ const vals=ranges.map(([a,b])=>rand(a,b));
+ last={labels:["Geral","Ponto vermelho","Mira 2x","Mira 4x","Mira AWM","Olhadinha","DPI sugerida","Botão de atirar"],values:vals,brand:document.querySelector("#brand").value,model:document.querySelector("#model").value,style:document.querySelector("#style").value,dpi};
+ document.querySelector("#results").innerHTML=last.labels.map((l,i)=>`<span>${l}</span><strong>${vals[i]}${i===7?"%":""}</strong>`).join("");
+}
+document.querySelector("#generate").addEventListener("click",generate);
+document.querySelector("#again").addEventListener("click",generate);
+document.querySelector("#copy").addEventListener("click",async()=>{
+ if(!last){generate();}
+ const textOut=`SENSI JC\nCelular: ${last.brand} ${last.model}\nEstilo: ${last.style}\nDPI: ${last.dpi}\n`+last.labels.map((l,i)=>`${l}: ${last.values[i]}${i===7?"%":""}`).join("\n");
+ try{await navigator.clipboard.writeText(textOut);document.querySelector("#copy").textContent="✓ COPIADO!";}
+ catch(e){window.prompt("Copie sua sensi:",textOut);}
+});
+document.querySelector("#brand").addEventListener("change",e=>{
+ const models={Realme:["Realme Note 50","Realme C55","Realme C53","Outro modelo"],Samsung:["Galaxy A05","Galaxy A15","Galaxy A25","Outro modelo"],Motorola:["Moto G04","Moto G24","Moto G54","Outro modelo"],Xiaomi:["Redmi 12","Redmi Note 13","Poco C65","Outro modelo"],iPhone:["iPhone SE","iPhone 11","iPhone 12","Outro modelo"],Outra:["Outro modelo"]};
+ document.querySelector("#model").innerHTML=models[e.target.value].map(x=>`<option>${x}</option>`).join("");
+});
+generate();
+</script>
+</body>
+</html>
